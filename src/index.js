@@ -41,4 +41,18 @@ app.post('/session', async (req, res) => {
     }
 });
 
+app.delete('/session', async (req, res) => {
+    const { username, userprofissao, useridade } = req.body;
+    try {
+        const deletedCURRICULUM = await pool.query('DELETE FROM CURRICULUM WHERE user_name = $1 AND user_profissao = $2 AND user_idade = $3 RETURNING *', [username, userprofissao, useridade]);
+        if (deletedCURRICULUM.rows.length === 0) {
+            return res.status(404).send('Registro não encontrado');
+        } else {
+            return res.status(200).send('Registro removido com sucesso');
+        }
+    } catch (err) {
+        return res.status(400).send(err);
+    }
+});
+
 app.listen(PORT, () => console.log(`server running on port ${PORT}`)); 
